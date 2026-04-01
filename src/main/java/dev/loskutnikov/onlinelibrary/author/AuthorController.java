@@ -3,6 +3,7 @@ package dev.loskutnikov.onlinelibrary.author;
 import jakarta.validation.Valid;
 import org.slf4j.*;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class AuthorController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteAuthor(@PathVariable("id") Long authorId) {
         log.info("Get request to delete author: id={}", authorId);
         authorService.deleteAuthor(authorId);

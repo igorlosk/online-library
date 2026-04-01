@@ -1,10 +1,12 @@
 package dev.loskutnikov.onlinelibrary.web;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,7 +25,7 @@ public class GlobExceptionHandler {
             IllegalArgumentException.class
     })
     public ResponseEntity<ServerErrorDto> handleValidationException(Exception e) {
-        log.error("Got validation exception" + e);
+        log.error("Got validation exception", e);
 
         String detailedMessage = e instanceof MethodArgumentNotValidException
                 ? constractMethodArgumentNotValidMessage((MethodArgumentNotValidException) e)
@@ -40,7 +42,7 @@ public class GlobExceptionHandler {
 
     @ExceptionHandler()
     public ResponseEntity<ServerErrorDto> handleGenericException(Exception e) {
-        log.error("Server error" + e);
+        log.error("Server error", e);
         var newDto = new ServerErrorDto(
                 "Server error",
                 e.getMessage(),
@@ -52,13 +54,25 @@ public class GlobExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ServerErrorDto> handlerNotFoundException(EntityNotFoundException e) {
-        log.error("Got exception" + e);
+        log.error("Got exception", e);
         var newDto = new ServerErrorDto(
                 "Сущность не найдена",
                 e.getMessage(),
                 LocalDateTime.now());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(newDto);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ServerErrorDto> handleAuthorisationException(AuthorizationDeniedException e) {
+        log.error("Handle authorisation exception", e);
+        var newDto = new ServerErrorDto(
+                "Forbidden",
+                e.getMessage(),
+                LocalDateTime.now());
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
                 .body(newDto);
     }
 

@@ -7,17 +7,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface BookRepository extends JpaRepository<BookEntity,Long> {
+public interface BookRepository extends JpaRepository<BookEntity, Long> {
 //    List<BookEntity> findAllByAuthorNameIsAndCostLessThan(
 //            String authorName,
 //            Integer maxCost
 //    );
 
     @Query("""
-SELECT b FROM BookEntity b
-where (:authorId IS NULL OR b.authorId = :authorId)
-AND (:cost IS NULL OR b.cost < :cost)
-""")
+            SELECT b FROM BookEntity b
+            where (:authorId IS NULL OR b.authorId = :authorId)
+            AND (:cost IS NULL OR b.cost < :cost)
+            """)
     List<BookEntity> searchBooks(
             Long authorId,
             @Param("cost") Integer maxCost,

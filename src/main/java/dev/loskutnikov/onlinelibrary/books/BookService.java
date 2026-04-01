@@ -72,7 +72,7 @@ public class BookService {
             throw new EntityNotFoundException("Book with id " + id + " not found");
         }
 
-        checkAuthorExistance(bookToUpdate.id());
+        checkAuthorExistance(bookToUpdate.authorId());
 
         bookRepository.updateBook(
                 id,

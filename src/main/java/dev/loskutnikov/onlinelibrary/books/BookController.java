@@ -44,14 +44,14 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public BookDto findById(@PathVariable("id") Long id) {
+    public BookDto findById(@PathVariable Long id) {
         log.info("Getting book with id {}", id);
         var foundBook = bookService.findById(id);
         return bookDtoConverter.toDto(foundBook);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBookById(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteBookById(@PathVariable Long id) {
         log.info("Deleting book with id {}", id);
         bookService.deleteBookById(id);
         return ResponseEntity
@@ -59,14 +59,14 @@ public class BookController {
                 .build();
     }
 
-    @PutMapping("{id}")
-    public BookDto updateBook(
-            @PathVariable("id") Long id,
+    @PutMapping("/{id}")
+    public ResponseEntity<BookDto> updateBook(
+            @PathVariable Long id,
             @RequestBody @Valid BookDto bookDtoToUpdate) {
         log.info("Updating book {}", bookDtoToUpdate);
-        var updatedBook = bookService
+        Book updatedBook = bookService
                 .updateBook(id, bookDtoConverter.toDomain(bookDtoToUpdate));
-        return bookDtoConverter.toDto(updatedBook);
+        return ResponseEntity.ok(bookDtoConverter.toDto(updatedBook));
     }
 
 }
