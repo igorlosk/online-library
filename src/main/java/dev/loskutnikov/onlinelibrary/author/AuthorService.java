@@ -29,7 +29,7 @@ public class AuthorService {
     }
 
     public List<Author> getAllAuthors() {
-        return authorRepository.findAll().stream()
+        return authorRepository.findAllWithBooks().stream()
                 .map(entityConverter::toDomain)
                 .toList();
     }

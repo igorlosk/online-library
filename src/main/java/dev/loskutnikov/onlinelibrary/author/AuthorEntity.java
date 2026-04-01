@@ -7,6 +7,15 @@ import java.util.*;
 
 @Entity
 @Table(name = "authors")
+@NamedEntityGraph(
+        name = "author-with-books",
+        attributeNodes = {
+                @NamedAttributeNode("books")
+        })
+@NamedEntityGraph(
+        name = "author-without-books",
+        attributeNodes = {
+        })
 public class AuthorEntity {
 
     @Id
