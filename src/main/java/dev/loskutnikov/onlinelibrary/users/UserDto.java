@@ -1,4 +1,7 @@
 package dev.loskutnikov.onlinelibrary.users;
 
-public class UserDto {
+public record UserDto(
+        Long id,
+        String login
+) {
 }
