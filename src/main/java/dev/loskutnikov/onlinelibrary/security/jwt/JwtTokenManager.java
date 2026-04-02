@@ -14,13 +14,13 @@ public class JwtTokenManager {
 
     private final SecretKey key;
 
-    private final long expiretionTime;
+    private final long expirationTime;
 
     public JwtTokenManager(
             @Value("${jwt.secret-key}") String keyString,
-            @Value("${jwt.lifetime}") long expiretionTime) {
+            @Value("${jwt.lifetime}") long expirationTime) {
         this.key = Keys.hmacShaKeyFor(keyString.getBytes());
-        this.expiretionTime = expiretionTime;
+        this.expirationTime = expirationTime;
     }
 
     public String generateToken(String login) {
@@ -30,7 +30,7 @@ public class JwtTokenManager {
                 .subject(login)
                 .signWith(key)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiretionTime))
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .compact();
     }
 
