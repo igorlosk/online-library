@@ -1,6 +1,6 @@
 package dev.loskutnikov.onlinelibrary.users;
 
-import dev.loskutnikov.onlinelibrary.security.jwt.JwtAuthenticationService;
+import dev.loskutnikov.onlinelibrary.security.jwt.AuthenticationService;
 import jakarta.validation.Valid;
 import org.slf4j.*;
 import org.springframework.http.HttpStatus;
@@ -15,11 +15,11 @@ public class UsersController {
 
     private final Logger log = LoggerFactory.getLogger(UsersController.class);
 
-    private final JwtAuthenticationService jwtAuthenticationService;
+    private final AuthenticationService authenticationService;
 
-    public UsersController(UserService userService, JwtAuthenticationService jwtAuthenticationService) {
+    public UsersController(UserService userService, AuthenticationService authenticationService) {
         this.userService = userService;
-        this.jwtAuthenticationService = jwtAuthenticationService;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping
@@ -39,7 +39,7 @@ public class UsersController {
             @Valid @RequestBody SignInRequest signInRequest
     ) {
         log.info("Get request for sing-in: login={}", signInRequest.login());
-        var token = jwtAuthenticationService.authenticateUser(signInRequest);
+        var token = authenticationService.authenticateUser(signInRequest);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new JwtTokenResponse(token));

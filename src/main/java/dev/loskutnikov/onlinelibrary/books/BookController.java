@@ -1,10 +1,14 @@
 package dev.loskutnikov.onlinelibrary.books;
 
+import dev.loskutnikov.onlinelibrary.books.purchase.PurchaseService;
+import dev.loskutnikov.onlinelibrary.security.jwt.AuthenticationService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +23,15 @@ public class BookController {
 
     private final BookDtoConverter bookDtoConverter;
 
-    public BookController(BookService bookService, BookDtoConverter bookDtoConverter) {
+    private final AuthenticationService authenticationService;
+
+    private final PurchaseService purchaseService;
+
+    public BookController(BookService bookService, BookDtoConverter bookDtoConverter, AuthenticationService authenticationService, PurchaseService purchaseService) {
         this.bookService = bookService;
         this.bookDtoConverter = bookDtoConverter;
+        this.authenticationService = authenticationService;
+        this.purchaseService = purchaseService;
     }
 
     @GetMapping
@@ -69,4 +79,12 @@ public class BookController {
         return ResponseEntity.ok(bookDtoConverter.toDto(updatedBook));
     }
 
+    @PostMapping("/{id}/purchase")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<Void> purchaseBook(@PathVariable("id") Long bookId){
+        log.info("Get book from purchase: bookId={}", bookId);
+        var currentUser = authenticationService.getCurrentAuthenticatedUserOrThrow();
+        purchaseService.performBookPurchase(currentUser, bookId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

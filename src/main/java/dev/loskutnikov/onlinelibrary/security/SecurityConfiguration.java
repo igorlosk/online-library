@@ -1,5 +1,6 @@
 package dev.loskutnikov.onlinelibrary.security;
 
+import dev.loskutnikov.onlinelibrary.security.jwt.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
@@ -7,16 +8,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -30,6 +30,9 @@ public class SecurityConfiguration {
 
     @Autowired
     private CustomAccessDeniedHandler customAccessDeniedHandler;
+
+    @Autowired
+    private JwtTokenFilter jwtTokenFilter;
 
     // цепочка фильтров перед тем как запрос попадает в контроллер
     @Bean
@@ -71,7 +74,7 @@ public class SecurityConfiguration {
                         exception.authenticationEntryPoint(customAuthenticationEntryPoint)
                                 .accessDeniedHandler(customAccessDeniedHandler))
                 // аутентификация по протоколу HttpBasic
-                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore(jwtTokenFilter, AnonymousAuthenticationFilter.class)
                 .build();
     }
 
