@@ -1,5 +1,6 @@
 package dev.loskutnikov.onlinelibrary;
 
+import dev.loskutnikov.onlinelibrary.users.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.*;
@@ -21,6 +22,8 @@ public class AbstractTest {
     protected MockMvc mockMvc;
     @Autowired
     protected ObjectMapper objectMapper;
+    @Autowired
+    protected UserTestUtils userTestUtils;
 
     protected final SecureRandom secureRandom = new SecureRandom();
 
@@ -52,5 +55,9 @@ public class AbstractTest {
 
     public int getRandomInt() {
         return secureRandom.nextInt();
+    }
+
+    public String getAuthorizationHeader(UserRole role){
+        return "Bearer " + userTestUtils.getJwtTokenWithRole(role);
     }
 }
