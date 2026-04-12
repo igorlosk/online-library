@@ -19,7 +19,7 @@ public class BookEventSender {
     public void sendEvent(BookKafkaEvent bookKafkaEvent){
         logger.info("Sending event: event={}", bookKafkaEvent);
         var result = kafkaTemplate.send(
-                "books-topik",
+                "books-topic",
                 bookKafkaEvent.bookId(),
                 bookKafkaEvent);
 
