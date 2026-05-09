@@ -101,6 +101,7 @@ public class BookService {
                 bookToUpdate.cost()
         );
         var updatedBook = bookEntityConverter.toDomain(bookRepository.findById(id).orElseThrow());
+
         bookEventSender.sendEvent(new BookKafkaEvent(
                 id,
                 EventType.UPDATED,

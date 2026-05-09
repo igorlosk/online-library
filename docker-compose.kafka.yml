@@ -3,6 +3,7 @@ version: '3.7'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
+    container_name: online-library-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:

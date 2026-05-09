@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: online-library-postgres
+    volumes:
+      - online_library_pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: online_library
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+volumes:
+  online_library_pg_data:
